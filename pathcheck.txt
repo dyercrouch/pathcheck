@@ -1,0 +1,61 @@
+###########################################################
+#
+# Author: Dyer Crouch, May 1st, 2014
+# Fuction: "pathcheck"
+#
+# Loops through each entry (directory) in your $PATH and
+# does some basic sanity checks.
+#
+# Output example -
+#   Directories with issues are shown with a prefix such as:
+#     --> /usr/local/bin  # Directory does not exist.
+#   Same directory if found with no issues would be shown as:
+#     /usr/local/bin  # Valid directory entry.
+#
+# Should work "as is" in:
+#    Linux/Unix - bash, ksh, sh, csh, etc...
+#    Windows - Git bash, MKS Toolkit, other Uinix/Linux like shells.
+#    Apple OS command line - OS X, MacOS etc...
+#    Android OS - Linux.
+#
+# No command line options needed.
+#
+# Can be put in a file and "sourced" by using:
+# . ${file the code below is in}
+#
+# I put this in my .functons file which is sourced by:
+# .profile, .kshrc. .bashrc etc...
+#
+###########################################################
+
+function pathcheck # List each PATH entry in order and if it exists.
+{
+# Assumes ":" as field seperator for $PATH.
+# If you have a non-standard seperator, change the : char below with 
+#    whatever your command line displays when you give the command: 
+#    echo $PATH
+echo $PATH | sed 's/:/\
+/g' | while read X ; do
+
+   if [ -d "$X" ] ; then    # If $X is a directory.
+ 
+      if [ -r "$X" ] ; then   # If $X is readable.
+         echo "  $X  # Valid directory entry. "
+      else   # $X is not readable/
+         echo "  --> $X  # Directory exists, but can not read contents."
+      fi
+ 
+   else # $X is not a regular directory or does not exist.
+ 
+      if [ -e "$X" ] ; then # If $X exists.
+         echo "  --> $X  # Does not appear to be a regular directory."
+      else
+         echo "  --> $X  # Directory does not exist."
+      fi
+
+   fi
+
+done
+}
+
+
